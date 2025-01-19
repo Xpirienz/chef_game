@@ -14,15 +14,15 @@ black = (23, 32, 42)
 white = (253, 254, 254)
 
 #Sky backgroud
-surface_load_background = pygame.image.load('grapichs\Sky.jpg')
+surface_load_background = pygame.image.load('graphics\Sky.jpg')
 surface_background = pygame.transform.scale(surface_load_background,(height, width))
 rect_background = surface_background.get_rect(topleft = (0,0))
 
-surface_load_cloud = pygame.image.load('grapichs/nube.png')
+surface_load_cloud = pygame.image.load('graphics/nube.png')
 rect_cloud = surface_load_cloud.get_rect(topleft = (0,0))
 
 #Background
-surface_load_plaza = pygame.image.load('grapichs\plaza.png')
+surface_load_plaza = pygame.image.load('graphics\plaza.png')
 surface_plaza = pygame.transform.scale(surface_load_plaza,(height, width))
 rect_plaza = surface_plaza.get_rect(midbottom = (height//2, width))
 
