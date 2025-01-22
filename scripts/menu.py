@@ -23,11 +23,11 @@ botton_font = pygame.font.Font(None, 40)
 instructions_font = pygame.font.Font(None, 30)
 
 # Fondo e imágenes
-fondo = pygame.image.load('Desktop/Proyecto ch/imagns/fondo.webp').convert()
+fondo = pygame.image.load('imagns/fondo.webp').convert()
 
 fondo = pygame.transform.scale(fondo, (800, 400))
 
-cursor_img = pygame.image.load('Desktop/Proyecto ch/imagns/mano.png').convert_alpha()
+cursor_img = pygame.image.load('imagns/mano.png').convert_alpha()
 cursor_img = pygame.transform.scale(cursor_img, (30, 30))
 
 # Textos y botones
