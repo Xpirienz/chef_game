@@ -15,7 +15,7 @@ white = (253, 254, 254)
 
 
 #Background
-surface_load_background = pygame.image.load('graphics/background.png')
+surface_load_background = pygame.image.load('graphics/background.jpg')
 surface_background = pygame.transform.scale(surface_load_background,(height, width))
 rect_background = surface_background.get_rect(midbottom = (height//2, width))
 
