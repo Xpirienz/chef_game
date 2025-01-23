@@ -13,32 +13,24 @@ font = pygame.font.Font('fonts\Pixeltype.ttf',90)
 black = (23, 32, 42)
 white = (253, 254, 254)
 
-#Sky backgroud
-surface_load_background = pygame.image.load('graphics\Sky.jpg')
-surface_background = pygame.transform.scale(surface_load_background,(height, width))
-rect_background = surface_background.get_rect(topleft = (0,0))
-
-surface_load_cloud = pygame.image.load('graphics/nube.png')
-rect_cloud = surface_load_cloud.get_rect(topleft = (0,0))
 
 #Background
-surface_load_plaza = pygame.image.load('graphics\plaza.png')
-surface_plaza = pygame.transform.scale(surface_load_plaza,(height, width))
-rect_plaza = surface_plaza.get_rect(midbottom = (height//2, width))
+surface_load_background = pygame.image.load('graphics/background.png')
+surface_background = pygame.transform.scale(surface_load_background,(height, width))
+rect_background = surface_background.get_rect(midbottom = (height//2, width))
 
 #Title text
-surface_title = font.render('Unusual food at National comedor', False, 'white')
-rect_title = surface_title.get_rect(center = (height//2,width//4))
+surface_load_title = pygame.image.load('graphics/title.png')
+surface_title = pygame.transform.scale(surface_load_title,(height//1.5,width//1.5))
+rect_title = surface_title.get_rect(center = (height//2,width//3))
 
 #Play
 surface_play = font.render('Jugar', False, white)
-rect_play = surface_play.get_rect(center = (height//2,width//2))
+rect_play = surface_play.get_rect(center = (height//2,width//1.4))
 
 #Exit
 surface_exit = font.render('Salir', False, white)
-rect_exit = surface_exit.get_rect(center = (height//2, width//1.5))
-
-
+rect_exit = surface_exit.get_rect(center = (height//2, width//1.2))
 
 
 while True:
@@ -48,26 +40,29 @@ while True:
             pygame.quit()
             exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if rect_exit.collidepoint(event.pos):
-                pygame.quit()
-                exit()
+            if event.button == 1:
+                if rect_exit.collidepoint(event.pos):
+                    pygame.quit()
+                    exit()
+                if rect_play.collidepoint(event.pos):
+                    print('JUGANDO')
+        if event.type == pygame.MOUSEMOTION:
+            screen.fill(black)
             if rect_play.collidepoint(event.pos):
-                print('JUGANDO')
-    
+                pygame.draw.line(surface_background,white, (rect_play.left, rect_play.bottom + 2),(rect_play.right, rect_play.bottom + 2), 3)
+            
+            
+                
 
     #Background
     screen.blit(surface_background, rect_background)
-    screen.blit(surface_load_cloud, rect_cloud)
-    screen.blit(surface_plaza, rect_plaza)
 
-    #text
+    #Title
     screen.blit(surface_title, rect_title)
+
+    #Text
     screen.blit(surface_play, rect_play)
     screen.blit(surface_exit, rect_exit)
-
-    #Animation
-    rect_cloud.x += 1
-    if rect_cloud.right > width + 400: rect_cloud.left = -400
 
     pygame.display.update()
     clock.tick(60)
