@@ -25,11 +25,11 @@ surface_title = pygame.transform.scale(surface_load_title,(height//1.5,width//1.
 rect_title = surface_title.get_rect(center = (height//2,width//3))
 
 #Play
-surface_play = font.render('Jugar', False, white)
+surface_play = font.render('Play', False, white)
 rect_play = surface_play.get_rect(center = (height//2,width//1.4))
 
 #Exit
-surface_exit = font.render('Salir', False, white)
+surface_exit = font.render('Exit', False, white)
 rect_exit = surface_exit.get_rect(center = (height//2, width//1.2))
 
 
@@ -46,14 +46,7 @@ while True:
                     exit()
                 if rect_play.collidepoint(event.pos):
                     print('JUGANDO')
-        if event.type == pygame.MOUSEMOTION:
-            screen.fill(black)
-            if rect_play.collidepoint(event.pos):
-                pygame.draw.line(surface_background,white, (rect_play.left, rect_play.bottom + 2),(rect_play.right, rect_play.bottom + 2), 3)
-            
-            
-                
-
+        
     #Background
     screen.blit(surface_background, rect_background)
 
@@ -63,6 +56,12 @@ while True:
     #Text
     screen.blit(surface_play, rect_play)
     screen.blit(surface_exit, rect_exit)
+
+    #Button mouse motion animation
+    mouse_pos = pygame.mouse.get_pos()
+    if rect_play.collidepoint(mouse_pos):pygame.draw.line(screen,white, (rect_play.left, rect_play.bottom),(rect_play.right, rect_play.bottom), 4)
+    if rect_exit.collidepoint(mouse_pos):pygame.draw.line(screen,white, (rect_exit.left, rect_exit.bottom - 10),(rect_exit.right, rect_exit.bottom -10), 4)
+
 
     pygame.display.update()
     clock.tick(60)
