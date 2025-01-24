@@ -1,21 +1,19 @@
 import pygame
 from sys import exit
 
+##################################################--SCREEN--###############################################################
 pygame.init()
-#Screen
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 clock = pygame.time.Clock()
 height, width = screen.get_size()
-
+################################---LOAD FILES, SOUNDS, FONTS AND RECTS---###################################################
 #Font and colors
 font = pygame.font.Font('fonts\Concrete.ttf',90)
-
 black = (23, 32, 42)
 white = (253, 254, 254)
 
 #Sound effects
 menu_sound = pygame.mixer.Sound("effects\menusound.wav")
-
 
 #Background
 surface_load_background = pygame.image.load('graphics/background.png')
@@ -35,56 +33,77 @@ rect_play = surface_play.get_rect(center = (height//2,width//1.4))
 surface_exit = font.render('Exit', True, white)
 rect_exit = surface_exit.get_rect(center = (height//2, width//1.2))
 
-#Switches
+#Flag switches 
 sound_played_play = False
 sound_played_exit = False
+######################################################################################################################
 
-while True:
-    #Loop events
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                if rect_exit.collidepoint(event.pos):
-                    pygame.quit()
-                    exit()
-                if rect_play.collidepoint(event.pos):
-                    print('JUGANDO')
+#-------------------------------------------------------MENU---------------------------------------------------------#
+def master_menu():
 
+    #Import global variables
+    global sound_played_exit,sound_played_play
 
-    #Background
-    screen.blit(surface_background, rect_background)
+    while True:
+        #Loop events
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if rect_exit.collidepoint(event.pos):
+                        pygame.quit()
+                        exit()
+                    if rect_play.collidepoint(event.pos):
+                        game_running()
 
-    #Title
-    screen.blit(surface_title, rect_title)
+        #Background
+        screen.blit(surface_background, rect_background)
 
-    #Text
-    screen.blit(surface_play, rect_play)
-    screen.blit(surface_exit, rect_exit)
+        #Title
+        screen.blit(surface_title, rect_title)
 
+        #Text
+        screen.blit(surface_play, rect_play)
+        screen.blit(surface_exit, rect_exit)
 
-
-    #Button mouse motion animation
-    mouse_pos = pygame.mouse.get_pos()
-    if rect_play.collidepoint(mouse_pos):
-        pygame.draw.line(screen,white, (rect_play.left, rect_play.bottom +10 ),(rect_play.right, rect_play.bottom +10), 7)
-        if not sound_played_play:  
-            menu_sound.play()
-            sound_played_play = True
-    else:
-        sound_played_play = False
-    
-    if rect_exit.collidepoint(mouse_pos):
-        pygame.draw.line(screen,white, (rect_exit.left, rect_exit.bottom - 5),(rect_exit.right, rect_exit.bottom -5), 7)
-        if not sound_played_exit:  
-            menu_sound.play()
-            sound_played_exit = True
-    else:
-        sound_played_exit = False
+        #Button mouse motion animation with sound effect
+        mouse_pos = pygame.mouse.get_pos()
+        if rect_play.collidepoint(mouse_pos):
+            pygame.draw.line(screen,white, (rect_play.left, rect_play.bottom +10 ),(rect_play.right, rect_play.bottom +10), 7)
+            if not sound_played_play:  
+                menu_sound.play()
+                sound_played_play = True
+        else:
+            sound_played_play = False
         
+        if rect_exit.collidepoint(mouse_pos):
+            pygame.draw.line(screen,white, (rect_exit.left, rect_exit.bottom - 5),(rect_exit.right, rect_exit.bottom -5), 7)
+            if not sound_played_exit:  
+                menu_sound.play()
+                sound_played_exit = True
+        else:
+            sound_played_exit = False
+            
+        pygame.display.update()
+        clock.tick(60)
+#--------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------GAME---------------------------------------------------------------#
+def game_running():
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
 
 
-    pygame.display.update()
-    clock.tick(60)
+
+        screen.fill(black)
+
+        pygame.display.update()
+        clock.tick(60)
+#----------------------------------------------------------------------------------------------------------------------------------#
+
+master_menu()
