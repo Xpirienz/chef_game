@@ -6,7 +6,7 @@ pygame.init()
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 clock = pygame.time.Clock()
 height, width = screen.get_size()
-################################---LOAD FILES, SOUNDS, FONTS AND RECTS---###################################################
+##############################################---MENU AND TUTO FILES---#####################################################
 #Font and colors
 font = pygame.font.Font('fonts\Concrete.ttf',90)
 black = (23, 32, 42)
@@ -18,7 +18,7 @@ menu_sound = pygame.mixer.Sound("effects\menusound.wav")
 #Background
 surface_load_background = pygame.image.load('graphics/background.png')
 surface_background = pygame.transform.scale(surface_load_background,(height, width))
-rect_background = surface_background.get_rect(midbottom = (height//2, width))
+rect_background = surface_background.get_rect(bottomright = (height, width))
 
 #Title text
 surface_load_title = pygame.image.load('graphics/title.png')
@@ -33,14 +33,18 @@ rect_play = surface_play.get_rect(center = (height//2,width//1.4))
 surface_exit = font.render('Exit', True, white)
 rect_exit = surface_exit.get_rect(center = (height//2, width//1.2))
 
+#Continue
+surface_continue = font.render('continue', True, white)
+rect_continue = surface_continue.get_rect(center = (height//1.2, width//1.2))
+
 #Flag switches 
 sound_played_play = False
 sound_played_exit = False
+sound_played_continue = False
 ######################################################################################################################
 
-#-------------------------------------------------------MENU---------------------------------------------------------#
+#-------------------------------------------------------------MENU---------------------------------------------------------------#
 def master_menu():
-
     #Import global variables
     global sound_played_exit,sound_played_play
 
@@ -56,7 +60,7 @@ def master_menu():
                         pygame.quit()
                         exit()
                     if rect_play.collidepoint(event.pos):
-                        game_running()
+                        tutorial_screen()
 
         #Background
         screen.blit(surface_background, rect_background)
@@ -70,6 +74,7 @@ def master_menu():
 
         #Button mouse motion animation with sound effect
         mouse_pos = pygame.mouse.get_pos()
+
         if rect_play.collidepoint(mouse_pos):
             pygame.draw.line(screen,white, (rect_play.left, rect_play.bottom +10 ),(rect_play.right, rect_play.bottom +10), 7)
             if not sound_played_play:  
@@ -89,6 +94,38 @@ def master_menu():
         pygame.display.update()
         clock.tick(60)
 #--------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------TUTO---------------------------------------------------------------#
+def tutorial_screen():
+    #Loop events
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if rect_continue.collidepoint(event.pos):
+                        game_running()
+            
+        #Background(menu info options)
+        screen.blit(surface_background,rect_background)
+        #Continue
+        screen.blit(surface_continue, rect_continue)
+
+        #Button mouse motion animation with sound effects
+        mouse_pos = pygame.mouse.get_pos()
+
+        if rect_continue.collidepoint(mouse_pos):
+            pygame.draw.line(screen,white, (rect_continue.left, rect_continue.bottom - 5),(rect_continue.right, rect_continue.bottom -5), 7)
+            if not sound_played_exit:  
+                menu_sound.play()
+                sound_played_exit = True
+        else:
+            sound_played_exit = False
+
+        pygame.display.update()
+        clock.tick(60)
+#--------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------GAME---------------------------------------------------------------#
 def game_running():
 
@@ -98,12 +135,10 @@ def game_running():
                 pygame.quit()
                 exit()
 
-
-
         screen.fill(black)
 
         pygame.display.update()
         clock.tick(60)
-#----------------------------------------------------------------------------------------------------------------------------------#
+#--------------------------------------------------------------------------------------------------------------------------------#
 
 master_menu()
