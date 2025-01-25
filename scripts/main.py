@@ -1,12 +1,12 @@
 import pygame
 from sys import exit
 
-##################################################--SCREEN--###############################################################
+#######################################################--SCREEN--#################################################################
 pygame.init()
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 clock = pygame.time.Clock()
 height, width = screen.get_size()
-##############################################---MENU AND TUTO FILES---#####################################################
+##############################################---MENU AND TUTO FILES---############################################################
 #Font and colors
 font = pygame.font.Font('fonts\Concrete.ttf',90)
 black = (23, 32, 42)
@@ -15,10 +15,16 @@ white = (253, 254, 254)
 #Sound effects
 menu_sound = pygame.mixer.Sound("effects\menusound.wav")
 
-#Background
+#Backgrounds
+
 surface_load_background = pygame.image.load('graphics/background.png')
 surface_background = pygame.transform.scale(surface_load_background,(height, width))
 rect_background = surface_background.get_rect(bottomright = (height, width))
+
+surface_load_backgroundt = pygame.image.load('graphics/background_tuto.png')
+surface_backgroundt = pygame.transform.scale(surface_load_backgroundt,(height,width))
+rect_backgroundt = surface_backgroundt.get_rect(bottomright =(height, width))
+
 
 #Title text
 surface_load_title = pygame.image.load('graphics/title.png')
@@ -41,7 +47,7 @@ rect_continue = surface_continue.get_rect(center = (height//1.2, width//1.2))
 sound_played_play = False
 sound_played_exit = False
 sound_played_continue = False
-######################################################################################################################
+##################################################################################################################################
 
 #-------------------------------------------------------------MENU---------------------------------------------------------------#
 def master_menu():
@@ -108,7 +114,8 @@ def tutorial_screen():
                         game_running()
             
         #Background(menu info options)
-        screen.blit(surface_background,rect_background)
+        screen.blit(surface_backgroundt,rect_background)
+        
         #Continue
         screen.blit(surface_continue, rect_continue)
 
