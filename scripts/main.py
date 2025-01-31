@@ -43,10 +43,16 @@ rect_exit = surface_exit.get_rect(center = (height//2, width//1.2))
 surface_continue = font.render('continue', True, white)
 rect_continue = surface_continue.get_rect(center = (height//1.2, width//1.2))
 
+
+surface_fly = pygame.image.load('graphics\Fly1.png')
+fly_rect = surface_fly.get_rect(center =(height//2,width//2))
+
+
 #Flag switches 
 sound_played_play = False
 sound_played_exit = False
 sound_played_continue = False
+arrastre = False
 ##################################################################################################################################
 
 #-------------------------------------------------------------MENU---------------------------------------------------------------#
@@ -141,8 +147,20 @@ def game_running():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if fly_rect.collidepoint(event.pos):
+                    arrastre = True
+                    offset_x = event.pos[0] - fly_rect.x
+                    offset_y = event.pos[1] - fly_rect.y
+            if event.type == pygame.MOUSEBUTTONUP:
+                arrastre = False
+            if event.type == pygame.MOUSEMOTION and arrastre:
+                 fly_rect.x = event.pos[0] - offset_x
+                 fly_rect.y = event.pos[1] - offset_y
+                 
+        screen.fill('White')
+        screen.blit(surface_fly,fly_rect)
 
-        screen.fill(black)
 
         pygame.display.update()
         clock.tick(60)
