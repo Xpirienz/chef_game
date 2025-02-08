@@ -10,24 +10,24 @@ height, width = screen.get_size()
 #Font and colors
 font = pygame.font.Font('fonts\Concrete.ttf',90)
 black = (23, 32, 42)
-white = (253, 254, 254)
+white = (255, 255, 255)
 
 #Sound effects
 menu_sound = pygame.mixer.Sound("effects\menusound.wav")
 
 #Backgrounds
 
-surface_load_background = pygame.image.load('graphics/background.png')
+surface_load_background = pygame.image.load('graphics/background.png').convert_alpha()
 surface_background = pygame.transform.scale(surface_load_background,(height, width))
 rect_background = surface_background.get_rect(bottomright = (height, width))
 
-surface_load_backgroundt = pygame.image.load('graphics/background_tuto.png')
+surface_load_backgroundt = pygame.image.load('graphics/background_tuto.png').convert_alpha()
 surface_backgroundt = pygame.transform.scale(surface_load_backgroundt,(height,width))
 rect_backgroundt = surface_backgroundt.get_rect(bottomright =(height, width))
 
 
 #Title text
-surface_load_title = pygame.image.load('graphics/title.png')
+surface_load_title = pygame.image.load('graphics/title.png').convert_alpha()
 surface_title = pygame.transform.smoothscale(surface_load_title,(height//1.5,width//1.5))
 rect_title = surface_title.get_rect(center = (height//2,width//3))
 
