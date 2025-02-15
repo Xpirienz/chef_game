@@ -13,7 +13,7 @@ black = (23, 32, 42)
 white = (255, 255, 255)
 
 #Sound effects
-menu_sound = pygame.mixer.Sound("effects\menusound.wav")
+menu_sound = pygame.mixer.Sound("effects/menusound.wav")
 
 #Backgrounds
 
@@ -44,7 +44,7 @@ surface_continue = font.render('continue', True, white)
 rect_continue = surface_continue.get_rect(center = (height//1.2, width//1.2))
 
 
-surface_fly = pygame.image.load('graphics\Fly1.png')
+surface_fly = pygame.image.load('graphics/Fly1.png')
 fly_rect = surface_fly.get_rect(center =(height//2,width//2))
 
 
