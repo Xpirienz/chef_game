@@ -251,10 +251,9 @@ def game_running():
                  fly_rect.x = event.pos[0] - offset_x
                  fly_rect.y = event.pos[1] - offset_y
 
-
+        #Blitss
         screen.blit(surface_backgroundg,rect_backgroundg)
         screen.blit(surface_kidchen,rect_kidchen)
-
         screen.blit(surface_pan1,rect_pan1)
         screen.blit(surface_pan2,rect_pan2)
         screen.blit(surface_pan3,rect_pan3)
@@ -267,37 +266,14 @@ def game_running():
         screen.blit(surface_lettuce,rect_lettuce)
         screen.blit(surface_tomat,rect_tomat)
         screen.blit(surface_onion,rect_onion)
-
         screen.blit(surface_chips,rect_chips)
         screen.blit(surface_soda,rect_soda)
         screen.blit(surface_water,rect_water)
         screen.blit(surface_boxjuice,rect_boxjuice)
-
         screen.blit(surface_salsa1,rect_salsa1)
         screen.blit(surface_salsa2,rect_salsa2)
         screen.blit(surface_salsa3,rect_salsa3)
         
-        '''
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        screen.blit(surface_kidchen,rect_kidchen)
-        '''
         screen.blit(surface_fly,fly_rect)
 
 
