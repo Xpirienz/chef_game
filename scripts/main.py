@@ -34,6 +34,9 @@ surface_load_kidchen = pygame.image.load('graphics/art_game background/table wor
 surface_kidchen = pygame.transform.scale(surface_load_kidchen,(height,width))
 rect_kidchen = surface_kidchen.get_rect(bottomright = (height,width))
 
+
+boton_vaciar = pygame.Rect(width//2 - 50, height//2 - 25, 100, 50)
+
 #Game objets
 
 ingredientes_data = [
@@ -102,6 +105,7 @@ fly_rect = surface_fly.get_rect(center =(height//2,width//2))
 #Zona de armado
 
 zona_armado = pygame.Rect(width*0.7426 , height*0.418, height * 0.26, width*0.187)
+ingredientes_armados = []
 
 
 #Flag switches 
@@ -197,24 +201,37 @@ def tutorial_screen():
 #--------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------GAME---------------------------------------------------------------#
 def game_running():
-    global arrastre
+    global ingredientes_armados
+    ingrediente_seleccionado = None
+    offset_x, offset_y = 0, 0
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+                
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if fly_rect.collidepoint(event.pos):
-                    arrastre = True
-                    offset_x = event.pos[0] - fly_rect.x
-                    offset_y = event.pos[1] - fly_rect.y
-            if event.type == pygame.MOUSEBUTTONUP:
-                arrastre = False
-            if event.type == pygame.MOUSEMOTION and arrastre:
-                 fly_rect.x = event.pos[0] - offset_x
-                 fly_rect.y = event.pos[1] - offset_y
+                if boton_vaciar.collidepoint(event.pos):
+                    ingredientes_armados.clear()
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for ing in ingredientes:
+                    if ing["rect"].collidepoint(event.pos):
+                        ingrediente_seleccionado = {"name": ing["name"], "image": ing["image"], "rect": ing["rect"].copy()}
+                        offset_x = event.pos[0] - ingrediente_seleccionado["rect"].x
+                        offset_y = event.pos[1] - ingrediente_seleccionado["rect"].y
+                        break
+
+            if event.type == pygame.MOUSEBUTTONUP and ingrediente_seleccionado:
+                if zona_armado.colliderect(ingrediente_seleccionado["rect"]):
+                    ingredientes_armados.append(ingrediente_seleccionado)
+                ingrediente_seleccionado = None
+
+            if event.type == pygame.MOUSEMOTION and ingrediente_seleccionado:
+                ingrediente_seleccionado["rect"].x = event.pos[0] - offset_x
+                ingrediente_seleccionado["rect"].y = event.pos[1] - offset_y
+            
 
 
 
@@ -225,13 +242,40 @@ def game_running():
         #Blitss en pantalla
         screen.blit(surface_backgroundg,rect_backgroundg)
         screen.blit(surface_kidchen,rect_kidchen)
+      
+        
+        # Dibujar el botón de vaciar
+        pygame.draw.rect(screen, (255, 0, 0), boton_vaciar)
+        font = pygame.font.Font(None, 36)
+        text = font.render("Vaciar", True, (255, 255, 255))
+        screen.blit(text, (boton_vaciar.x + 20, boton_vaciar.y + 10))
+
+        # Dibujar la zona de armado
+        pygame.draw.rect(screen, (200, 100, 100), zona_armado, 3)
+        
+        # Dibujar el botón de vaciar
+        pygame.draw.rect(screen, (255, 0, 0), boton_vaciar)
+        font = pygame.font.Font(None, 36)
+        text = font.render("Vaciar", True, (255, 255, 255))
+        screen.blit(text, (boton_vaciar.x + 20, boton_vaciar.y + 10))
+        
+        # Dibujar todos los ingredientes
         for ing in ingredientes:
             screen.blit(ing["image"], ing["rect"])
-        screen.blit(surface_fly,fly_rect)
-        pygame.draw.rect(screen, 'Red', zona_armado, 3)
-
-
-
+        
+        # Dibujar los ingredientes armados dentro de la zona, organizados a la derecha
+        x_offset, y_offset = zona_armado.x + 10, zona_armado.y + 10
+        max_column = 3  # Número máximo de columnas antes de saltar de fila
+        col_count = 0
+        for ing in ingredientes_armados:
+            ing["rect"].topleft = (x_offset, y_offset)
+            screen.blit(ing["image"], ing["rect"])
+            x_offset += 50  # Espaciado horizontal entre ingredientes
+            col_count += 1
+            if col_count >= max_column:  # Si llega al límite de columnas, baja una fila
+                col_count = 0
+                x_offset = zona_armado.x + 10
+                y_offset += 50  # Espaciado vertical
 
         pygame.display.update()
         clock.tick(60)
