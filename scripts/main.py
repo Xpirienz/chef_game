@@ -1,6 +1,6 @@
 import pygame
 from sys import exit
-
+#Julisss
 #######################################################--SCREEN--#################################################################
 pygame.init()
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
@@ -34,9 +34,9 @@ surface_load_kidchen = pygame.image.load('graphics/art_game background/table wor
 surface_kidchen = pygame.transform.scale(surface_load_kidchen,(height,width))
 rect_kidchen = surface_kidchen.get_rect(bottomright = (height,width))
 
-#Game objets
+#Game objects
 
-#Toppins
+#Toppings
 surface_load_cheese = pygame.image.load('graphics/art_kidchen elements/cheese.png').convert_alpha()
 surface_cheese = pygame.transform.scale(surface_load_cheese,(90,90))
 rect_cheese = surface_cheese.get_rect(center = (height//4,width//1.350))
