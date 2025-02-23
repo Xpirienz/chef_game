@@ -34,8 +34,14 @@ surface_load_kidchen = pygame.image.load('graphics/art_game background/table wor
 surface_kidchen = pygame.transform.scale(surface_load_kidchen,(height,width))
 rect_kidchen = surface_kidchen.get_rect(bottomright = (height,width))
 
+#Borrar elementos y entregar
+surface_load_vaciar = pygame.image.load('graphics/art_game background/equis.png').convert_alpha()
+surface_vaciar = pygame.transform.scale(surface_load_vaciar,(150,150))
+rect_vaciar = surface_vaciar.get_rect(center = (height//1.15, width//1.193))
 
-boton_vaciar = pygame.Rect(width//2 - 50, height//2 - 25, 100, 50)
+surface_load_entregar = pygame.image.load('graphics/art_game background/chulo.png').convert_alpha()
+surface_entregar = pygame.transform.scale(surface_load_entregar,(170,170))
+rect_entregar = surface_entregar.get_rect(center = (height//1.33, width//1.215))
 
 #Game objets
 
@@ -212,7 +218,7 @@ def game_running():
                 exit()
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if boton_vaciar.collidepoint(event.pos):
+                if rect_vaciar.collidepoint(event.pos):
                     ingredientes_armados.clear()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -242,27 +248,20 @@ def game_running():
         #Blitss en pantalla
         screen.blit(surface_backgroundg,rect_backgroundg)
         screen.blit(surface_kidchen,rect_kidchen)
+        screen.blit(surface_vaciar,rect_vaciar)
+        screen.blit(surface_entregar,rect_entregar)
       
         
-        # Dibujar el botón de vaciar
-        pygame.draw.rect(screen, (255, 0, 0), boton_vaciar)
-        font = pygame.font.Font(None, 36)
-        text = font.render("Vaciar", True, (255, 255, 255))
-        screen.blit(text, (boton_vaciar.x + 20, boton_vaciar.y + 10))
+   
 
         # Dibujar la zona de armado
         pygame.draw.rect(screen, (200, 100, 100), zona_armado, 3)
         
-        # Dibujar el botón de vaciar
-        pygame.draw.rect(screen, (255, 0, 0), boton_vaciar)
-        font = pygame.font.Font(None, 36)
-        text = font.render("Vaciar", True, (255, 255, 255))
-        screen.blit(text, (boton_vaciar.x + 20, boton_vaciar.y + 10))
-        
+      
         # Dibujar todos los ingredientes
         for ing in ingredientes:
             screen.blit(ing["image"], ing["rect"])
-        
+
         # Dibujar los ingredientes armados dentro de la zona, organizados a la derecha
         x_offset, y_offset = zona_armado.x + 10, zona_armado.y + 10
         max_column = 3  # Número máximo de columnas antes de saltar de fila
