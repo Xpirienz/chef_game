@@ -257,24 +257,21 @@ def game_running():
         # Dibujar la zona de armado
         pygame.draw.rect(screen, (200, 100, 100), zona_armado, 3)
         
-      
-        # Dibujar todos los ingredientes
         for ing in ingredientes:
             screen.blit(ing["image"], ing["rect"])
-
         # Dibujar los ingredientes armados dentro de la zona, organizados a la derecha
-        x_offset, y_offset = zona_armado.x + 10, zona_armado.y + 10
-        max_column = 3  # Número máximo de columnas antes de saltar de fila
+        x_offset, y_offset = zona_armado.x + 45, zona_armado.y + 10
+        max_column = 4  # Número máximo de columnas antes de saltar de fila
         col_count = 0
         for ing in ingredientes_armados:
             ing["rect"].topleft = (x_offset, y_offset)
             screen.blit(ing["image"], ing["rect"])
-            x_offset += 50  # Espaciado horizontal entre ingredientes
+            x_offset += 110  # Espaciado horizontal entre ingredientes
             col_count += 1
             if col_count >= max_column:  # Si llega al límite de columnas, baja una fila
                 col_count = 0
                 x_offset = zona_armado.x + 10
-                y_offset += 50  # Espaciado vertical
+                y_offset += 90  # Espaciado vertical
 
         pygame.display.update()
         clock.tick(60)
