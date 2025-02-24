@@ -103,7 +103,6 @@ rect_exit = surface_exit.get_rect(center = (height//2, width//1.2))
 surface_continue = font.render('continue', True, white)
 rect_continue = surface_continue.get_rect(center = (height//1.2, width//1.2))
 
-
 #Zona de armado
 
 zona_armado = pygame.Rect(width*0.7426 , height*0.418, height * 0.26, width*0.187)
