@@ -4,7 +4,6 @@ from sys import exit
 
 ##################################################-FUNCIONES-#####################################################################
 def flash_animacion():
-
     # Asegurar que la animación esté centrada en el cliente
     anim_rect = animacion_frame1.get_rect(center=rect_client.center)  
 
@@ -17,32 +16,40 @@ def flash_animacion():
     screen.blit(animacion_frame2, anim_rect)
     pygame.display.update()
     pygame.time.delay(100) 
-    
-
 
 def verificar_receta():
-    global puntuacion, receta_actual, ingredientes_receta, bebida_actual, vidas, cliente_actual
+    global puntuacion, receta_actual, ingredientes_receta, bebida_actual, vidas, cliente_actual, tiempo_inicio
 
     ingredientes_set = {ing["name"] for ing in ingredientes_armados}  # Convertir a set
 
-    # Verificar si el conjunto de ingredientes coincide con la receta sin importar el orden
+    # Si el pedido es correcto
     if ingredientes_set == set(ingredientes_receta) | {bebida_actual}:
-        puntuacion += 1
+        puntuacion += 100
         mostrar_cliente_feliz()
         flash_animacion()
 
+    # Si el pedido es incorrecto o el tiempo llegó a 0
     else:
-        puntuacion -= 1
+        puntuacion -= 50
         vidas -= 1
         flash_animacion()
         if vidas <= 0:
             game_over()
 
-    ingredientes_armados.clear()
-    receta_actual, ingredientes_receta = random.choice(list(recetas.items()))
-    ingredientes_receta = list(ingredientes_receta)  # Convertir a lista para mantener orden en la nube
-    bebida_actual = random.choice(bebidas)
+    # Reiniciar cliente y pedido
+    cambiar_cliente()
+
+def cambiar_cliente():
+    global cliente_actual, receta_actual, ingredientes_receta, bebida_actual, tiempo_inicio
+    
+    # 🔹 Elegir nuevo cliente y pedido
     cliente_actual = random.choice(tipos_clientes)
+    receta_actual, ingredientes_receta = random.choice(list(recetas.items()))
+    bebida_actual = random.choice(bebidas)
+
+    # 🔹 Reiniciar el temporizador
+    tiempo_inicio = pygame.time.get_ticks()
+
 
 def mostrar_cliente_feliz():
     screen.blit(cliente_actual["feliz"], rect_client)
@@ -311,15 +318,20 @@ def tutorial_screen():
 #--------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------GAME---------------------------------------------------------------#
 def game_running():
-    global ingredientes_armados
+    global ingredientes_armados, tiempo_restante, puntuacion, cliente_actual
     ingrediente_seleccionado = None
     offset_x, offset_y = 0, 0
+    tiempo_inicio = pygame.time.get_ticks()
 
     while True:
 
         mouse_pos = pygame.mouse.get_pos()  # Obtener la posición del mouse
-        cursor_normal = True  # Bandera para restaurar cursor si no está sobre nada interactivo
-        
+        cursor_normal = True  # Bandera para restaurar cursor si no está sobre nada interacti
+
+        tiempo_actual = pygame.time.get_ticks()  # Obtener tiempo actual
+        tiempo_transcurrido = (tiempo_actual - tiempo_inicio) // 1000  # Convertir a segundos
+        tiempo_restante = max(5 - tiempo_transcurrido, 0)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -347,6 +359,10 @@ def game_running():
             if event.type == pygame.MOUSEMOTION and ingrediente_seleccionado:
                 ingrediente_seleccionado["rect"].x = event.pos[0] - offset_x
                 ingrediente_seleccionado["rect"].y = event.pos[1] - offset_y
+
+            
+
+
 
         # Cambiar cursor si el mouse está sobre un ingrediente
         for ing in ingredientes:
@@ -425,10 +441,13 @@ def game_running():
                     break
         
 
-        puntuacion_texto = font.render(f"Puntos: {puntuacion}", True, (0, 0, 255))
+        puntuacion_texto = font.render(f"+{puntuacion}", True, (0, 0, 255))
         vidas_texto = font.render(f"Vidas: {vidas}", True, (255, 0, 0))
-        screen.blit(vidas_texto, (500 , 50))
-        screen.blit(puntuacion_texto, (50, 50))
+        screen.blit(vidas_texto, (50 , 50))
+        screen.blit(puntuacion_texto, (500, 50))
+
+        tiempo_texto = font.render(f"{tiempo_restante}s", True, (255, 0, 0))  # Rojo si el tiempo baja
+        screen.blit(tiempo_texto, (rect_nube.x + rect_nube.width - 60, rect_nube.y + 20))  # Ajusta posición
 
 
         pygame.display.update()
