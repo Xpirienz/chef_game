@@ -212,6 +212,7 @@ vidas = 3
 puntuacion = 0
 
 #Flag switches 
+mouse_pos = pygame.mouse.get_pos()
 sound_played_play = False
 sound_played_exit = False
 sound_played_continue = False
@@ -311,9 +312,11 @@ def game_running():
     ingrediente_seleccionado = None
     offset_x, offset_y = 0, 0
 
-        
-
     while True:
+        
+        mouse_pos = pygame.mouse.get_pos()  # Obtener la posición del mouse
+        cursor_normal = True  # Bandera para restaurar cursor si no está sobre nada interactivo
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -322,21 +325,19 @@ def game_running():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if rect_vaciar.collidepoint(event.pos):
                     ingredientes_armados.clear()
-                if rect_entregar.collidepoint(event.pos):
+                elif rect_entregar.collidepoint(event.pos):
                     verificar_receta()
-        
+                else:
+                    for ing in ingredientes:
+                        if ing["rect"].collidepoint(event.pos):
+                            ingrediente_seleccionado = {"name": ing["name"], "image": ing["image"], "rect": ing["rect"].copy()}
+                            offset_x = event.pos[0] - ingrediente_seleccionado["rect"].x
+                            offset_y = event.pos[1] - ingrediente_seleccionado["rect"].y
+                            break
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                for ing in ingredientes:
-                    if ing["rect"].collidepoint(event.pos):
-                        ingrediente_seleccionado = {"name": ing["name"], "image": ing["image"], "rect": ing["rect"].copy()}
-                        offset_x = event.pos[0] - ingrediente_seleccionado["rect"].x
-                        offset_y = event.pos[1] - ingrediente_seleccionado["rect"].y
-                        break
-
-            if event.type == pygame.MOUSEBUTTONUP and ingrediente_seleccionado:#Agregar ingredientes en la parte de armado
+            if event.type == pygame.MOUSEBUTTONUP and ingrediente_seleccionado:
                 if zona_armado.colliderect(ingrediente_seleccionado["rect"]):
-                    if len(ingredientes_armados) < max_ingredientes:  # Verificar el límite de ingredientes
+                    if len(ingredientes_armados) < max_ingredientes:
                         ingredientes_armados.append(ingrediente_seleccionado)
                 ingrediente_seleccionado = None  
 
@@ -344,6 +345,24 @@ def game_running():
                 ingrediente_seleccionado["rect"].x = event.pos[0] - offset_x
                 ingrediente_seleccionado["rect"].y = event.pos[1] - offset_y
 
+        # Cambiar cursor si el mouse está sobre un ingrediente
+        for ing in ingredientes:
+            if ing["rect"].collidepoint(mouse_pos):
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)  # Cursor de mano
+                cursor_normal = False  
+                break  
+
+        # Cambiar cursor si el mouse está sobre la zona de armado o botones
+        if zona_armado.collidepoint(mouse_pos) or rect_vaciar.collidepoint(mouse_pos) or rect_entregar.collidepoint(mouse_pos):
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+            cursor_normal = False  
+
+        # Si el mouse no está sobre nada interactivo, restaurar cursor normal
+        if cursor_normal:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+
+ 
 
 
         #Blitss en pantalla
@@ -376,9 +395,6 @@ def game_running():
                 x_offset = zona_armado.x + 30
                 y_offset += 80  # Espaciado vertical
         
-
-
-
         # Posiciones dentro de la nube
         x_base = rect_nube.x + 30
         y_base = rect_nube.y + 80
