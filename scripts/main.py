@@ -4,6 +4,7 @@ from sys import exit
 
 ##################################################-FUNCIONES-#####################################################################
 def flash_animacion():
+
     # Asegurar que la animación esté centrada en el cliente
     anim_rect = animacion_frame1.get_rect(center=rect_client.center)  
 
@@ -16,6 +17,8 @@ def flash_animacion():
     screen.blit(animacion_frame2, anim_rect)
     pygame.display.update()
     pygame.time.delay(100) 
+    
+
 
 def verificar_receta():
     global puntuacion, receta_actual, ingredientes_receta, bebida_actual, vidas, cliente_actual
@@ -313,7 +316,7 @@ def game_running():
     offset_x, offset_y = 0, 0
 
     while True:
-        
+
         mouse_pos = pygame.mouse.get_pos()  # Obtener la posición del mouse
         cursor_normal = True  # Bandera para restaurar cursor si no está sobre nada interactivo
         
@@ -421,9 +424,11 @@ def game_running():
                     x_offset += espacio_entre_ingredientes  # Espaciado entre ingredientes
                     break
         
-        vidas_texto = font.render(f"Vidas: {vidas}", True, (255, 0, 0))
-        screen.blit(vidas_texto, (50, 100))
 
+        puntuacion_texto = font.render(f"Puntos: {puntuacion}", True, (0, 0, 255))
+        vidas_texto = font.render(f"Vidas: {vidas}", True, (255, 0, 0))
+        screen.blit(vidas_texto, (500 , 50))
+        screen.blit(puntuacion_texto, (50, 50))
 
 
         pygame.display.update()
