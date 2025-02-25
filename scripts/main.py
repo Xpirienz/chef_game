@@ -2,7 +2,7 @@ import pygame
 import random
 from sys import exit
 
-
+##################################################-FUNCIONES-#####################################################################
 def verificar_receta():
     
     global puntuacion, receta_actual, ingredientes_receta, bebida_actual, vidas, cliente_actual
@@ -121,11 +121,11 @@ for ing in ingredientes_data:
 #Alimentos armados, clientes y nube de pedido
 
 tipos_clientes = [
-    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry1.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry1happy.png').convert_alpha(), (100, 100))},
-    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry2.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry2happy.png').convert_alpha(), (100, 100))},
-    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry3.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry3happy.png').convert_alpha(), (100, 100))},
-    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry4.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry4happy.png').convert_alpha(), (100, 100))},
-    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry5.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry5happy.png').convert_alpha(), (100, 100))}
+    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry1.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry1happy.png').convert_alpha(), (300, 600))},
+    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry2.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry2happy.png').convert_alpha(), (300, 600))},
+    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry3.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry3happy.png').convert_alpha(), (300, 600))},
+    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry4.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry4happy.png').convert_alpha(), (300, 600))},
+    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry5.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry5happy.png').convert_alpha(), (300, 600))}
 ]
 
 rect_client = tipos_clientes[0]["normal"].get_rect(center=(width/0.65, height//4.8))
@@ -353,4 +353,3 @@ def game_running():
 #--------------------------------------------------------------------------------------------------------------------------------#
 master_menu()
 
-#########################################################FUNCIONES##############################################################
