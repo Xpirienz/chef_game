@@ -1,9 +1,42 @@
 import pygame
+import random
 from sys import exit
+
+
+def verificar_receta():
+    
+    global puntuacion, receta_actual, ingredientes_receta, bebida_actual, vidas, cliente_actual
+    ingredientes_set = {ing["name"] for ing in ingredientes_armados}
+    if ingredientes_set == ingredientes_receta | {bebida_actual}:  # Se agrega la bebida a la verificación
+        puntuacion += 1
+        mostrar_cliente_feliz()
+    else:
+        puntuacion -= 1
+        vidas -= 1
+        if vidas <= 0:
+            game_over()
+    ingredientes_armados.clear()
+    receta_actual, ingredientes_receta = random.choice(list(recetas.items()))
+    bebida_actual = random.choice(bebidas)  # Nueva bebida aleatoria
+    cliente_actual = random.choice(tipos_clientes)  # Nuevo cliente aleatorio
+
+def mostrar_cliente_feliz():
+    screen.blit(cliente_actual["feliz"], rect_client)
+    pygame.display.update()
+    pygame.time.delay(1000)  # Espera 1 segundo antes de cambiar al siguiente cliente
+
+def game_over():
+    screen.fill((0, 0, 0))
+    game_over_text = font.render("GAME OVER", True, (255, 0, 0))
+    screen.blit(game_over_text, (width//2 - 100, height//2))
+    pygame.display.update()
+    pygame.time.delay(3000)
+    pygame.quit()
+    exit()
 
 #######################################################--SCREEN--#################################################################
 pygame.init()
-screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
 clock = pygame.time.Clock()
 height, width = screen.get_size()
 ##############################################---MENU AND TUTO FILES---############################################################
@@ -83,8 +116,40 @@ for ing in ingredientes_data:
         rect.center = ing["pos"]
     elif ing["align"] == "midbottom":
         rect.midbottom = ing["pos"]
-    
     ingredientes.append({"name": ing["name"], "image": image, "rect": rect})
+
+#Alimentos armados, clientes y nube de pedido
+
+tipos_clientes = [
+    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry1.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry1happy.png').convert_alpha(), (100, 100))},
+    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry2.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry2happy.png').convert_alpha(), (100, 100))},
+    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry3.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry3happy.png').convert_alpha(), (100, 100))},
+    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry4.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry4happy.png').convert_alpha(), (100, 100))},
+    {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry5.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry5happy.png').convert_alpha(), (100, 100))}
+]
+
+rect_client = tipos_clientes[0]["normal"].get_rect(center=(width/0.65, height//4.8))
+
+surface_load_nube = pygame.image.load('graphics/art_client and delivery/d_pedido.png').convert_alpha()
+surface_nube = pygame.transform.scale(surface_load_nube,(600,300))
+rect_nube = surface_nube.get_rect(center = (width/0.9, height//8))
+
+cliente_actual = random.choice(tipos_clientes)
+
+# Definir recetas
+recetas = {
+    "hamburguesa": {"meat1", "lettuce", "tomato", "cheese", "pan1", "salsa1"},
+    "sandwich": {"jamoneta", "lettuce", "tomato", "cheese", "onion", "pan2"},
+    "hotdog": {"sausage", "pan1", "chips", "salsa2"},
+    "burrito": {"tortilla", "meat2", "onion", "lettuce", "salsa3"}
+}
+
+# Lista de bebidas
+bebidas = ["soda", "water", "boxjuice"]
+
+# Seleccionar receta y bebida aleatoria
+receta_actual, ingredientes_receta = random.choice(list(recetas.items()))
+bebida_actual = random.choice(bebidas)
 
 #Title text
 surface_load_title = pygame.image.load('graphics/art_menu/title.png').convert_alpha()
@@ -107,13 +172,18 @@ rect_continue = surface_continue.get_rect(center = (height//1.2, width//1.2))
 
 zona_armado = pygame.Rect(width*0.7426 , height*0.418, height * 0.26, width*0.187)
 ingredientes_armados = []
-
+max_ingredientes = 8
+vidas = 3
+puntuacion = 0
 
 #Flag switches 
 sound_played_play = False
 sound_played_exit = False
 sound_played_continue = False
 arrastre = False
+############################################################FUNCIONES############################################################
+
+
 ##################################################################################################################################
 
 #-------------------------------------------------------------MENU---------------------------------------------------------------#
@@ -206,6 +276,8 @@ def game_running():
     ingrediente_seleccionado = None
     offset_x, offset_y = 0, 0
 
+        
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -215,6 +287,9 @@ def game_running():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if rect_vaciar.collidepoint(event.pos):
                     ingredientes_armados.clear()
+                if rect_entregar.collidepoint(event.pos):
+                    verificar_receta()
+        
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for ing in ingredientes:
@@ -224,19 +299,15 @@ def game_running():
                         offset_y = event.pos[1] - ingrediente_seleccionado["rect"].y
                         break
 
-            if event.type == pygame.MOUSEBUTTONUP and ingrediente_seleccionado:
+            if event.type == pygame.MOUSEBUTTONUP and ingrediente_seleccionado:#Agregar ingredientes en la parte de armado
                 if zona_armado.colliderect(ingrediente_seleccionado["rect"]):
-                    ingredientes_armados.append(ingrediente_seleccionado)
-                ingrediente_seleccionado = None
+                    if len(ingredientes_armados) < max_ingredientes:  # Verificar el límite de ingredientes
+                        ingredientes_armados.append(ingrediente_seleccionado)
+                ingrediente_seleccionado = None  
 
             if event.type == pygame.MOUSEMOTION and ingrediente_seleccionado:
                 ingrediente_seleccionado["rect"].x = event.pos[0] - offset_x
                 ingrediente_seleccionado["rect"].y = event.pos[1] - offset_y
-            
-
-
-
-
 
 
 
@@ -245,13 +316,15 @@ def game_running():
         screen.blit(surface_kidchen,rect_kidchen)
         screen.blit(surface_vaciar,rect_vaciar)
         screen.blit(surface_entregar,rect_entregar)
-      
+
+        screen.blit(surface_nube, rect_nube)
+        screen.blit(cliente_actual["normal"], rect_client)
         
-   
+       
 
         # Dibujar la zona de armado
         pygame.draw.rect(screen, (200, 100, 100), zona_armado, 3)
-        
+        #Dibuja todos los ingredientes
         for ing in ingredientes:
             screen.blit(ing["image"], ing["rect"])
         # Dibujar los ingredientes armados dentro de la zona, organizados a la derecha
@@ -261,15 +334,23 @@ def game_running():
         for ing in ingredientes_armados:
             ing["rect"].topleft = (x_offset, y_offset)
             screen.blit(ing["image"], ing["rect"])
-            x_offset += 110  # Espaciado horizontal entre ingredientes
+            x_offset += 100  # Espaciado horizontal entre ingredientes
             col_count += 1
-            if col_count >= max_column:  # Si llega al límite de columnas, baja una fila
+            if col_count >= max_column:  
                 col_count = 0
-                x_offset = zona_armado.x + 10
-                y_offset += 90  # Espaciado vertical
+                x_offset = zona_armado.x + 30
+                y_offset += 80  # Espaciado vertical
+        
+        receta_texto = font.render(f"{receta_actual} + {bebida_actual}", True, (0, 0, 0))
+        vidas_texto = font.render(f"Vidas: {vidas}", True, (255, 0, 0))
+        screen.blit(receta_texto, (rect_nube.x + 10, rect_nube.y + 10))
+        screen.blit(vidas_texto, (50, 100))
+
+
 
         pygame.display.update()
         clock.tick(60)
 #--------------------------------------------------------------------------------------------------------------------------------#
-
 master_menu()
+
+#########################################################FUNCIONES##############################################################
