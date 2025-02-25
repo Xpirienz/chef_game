@@ -3,22 +3,43 @@ import random
 from sys import exit
 
 ##################################################-FUNCIONES-#####################################################################
+def flash_animacion():
+    # Asegurar que la animación esté centrada en el cliente
+    anim_rect = animacion_frame1.get_rect(center=rect_client.center)  
+
+    # Dibujar primer frame en el centro del cliente
+    screen.blit(animacion_frame1, anim_rect)
+    pygame.display.update()
+    pygame.time.delay(100)  # Espera 0.4 segundos
+
+    # Dibujar segundo frame en el centro del cliente
+    screen.blit(animacion_frame2, anim_rect)
+    pygame.display.update()
+    pygame.time.delay(100) 
+
 def verificar_receta():
-    
     global puntuacion, receta_actual, ingredientes_receta, bebida_actual, vidas, cliente_actual
-    ingredientes_set = {ing["name"] for ing in ingredientes_armados}
-    if ingredientes_set == ingredientes_receta | {bebida_actual}:  # Se agrega la bebida a la verificación
+
+    ingredientes_set = {ing["name"] for ing in ingredientes_armados}  # Convertir a set
+
+    # Verificar si el conjunto de ingredientes coincide con la receta sin importar el orden
+    if ingredientes_set == set(ingredientes_receta) | {bebida_actual}:
         puntuacion += 1
         mostrar_cliente_feliz()
+        flash_animacion()
+
     else:
         puntuacion -= 1
         vidas -= 1
+        flash_animacion()
         if vidas <= 0:
             game_over()
+
     ingredientes_armados.clear()
     receta_actual, ingredientes_receta = random.choice(list(recetas.items()))
-    bebida_actual = random.choice(bebidas)  # Nueva bebida aleatoria
-    cliente_actual = random.choice(tipos_clientes)  # Nuevo cliente aleatorio
+    ingredientes_receta = list(ingredientes_receta)  # Convertir a lista para mantener orden en la nube
+    bebida_actual = random.choice(bebidas)
+    cliente_actual = random.choice(tipos_clientes)
 
 def mostrar_cliente_feliz():
     screen.blit(cliente_actual["feliz"], rect_client)
@@ -120,6 +141,20 @@ for ing in ingredientes_data:
 
 #Alimentos armados, clientes y nube de pedido
 
+
+animacion_frame1 = pygame.image.load('graphics/art_client and delivery/flash.png').convert_alpha()
+animacion_frame2 = pygame.image.load('graphics/art_client and delivery/flash2.png').convert_alpha()
+animacion_frame1 = pygame.transform.scale(animacion_frame1, (400, 1000))
+animacion_frame2 = pygame.transform.scale(animacion_frame2, (400, 1000))
+
+
+alimentos_preparados = {
+    "hamburguesa": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/d_hamburger.png').convert_alpha(), (100, 100)),
+    "sandwich": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/d_sanduick.png').convert_alpha(), (100, 100)),
+    "hotdog": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/d_perrito.png').convert_alpha(), (100, 100)),
+    "burrito": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/d_taco.png').convert_alpha(), (100, 100))
+}
+
 tipos_clientes = [
     {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry1.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry1happy.png').convert_alpha(), (300, 600))},
     {"normal": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry2.png').convert_alpha(), (300, 600)), "feliz": pygame.transform.scale(pygame.image.load('graphics/art_client and delivery/furry2happy.png').convert_alpha(), (300, 600))},
@@ -138,8 +173,8 @@ cliente_actual = random.choice(tipos_clientes)
 
 # Definir recetas
 recetas = {
-    "hamburguesa": {"meat1", "lettuce", "tomato", "cheese", "pan1", "salsa1"},
-    "sandwich": {"jamoneta", "lettuce", "tomato", "cheese", "onion", "pan2"},
+    "hamburguesa": {"meat1", "lettuce", "tomato", "cheese", "pan2", "salsa1"},
+    "sandwich": {"jamoneta", "lettuce", "tomato", "cheese", "onion", "pan3"},
     "hotdog": {"sausage", "pan1", "chips", "salsa2"},
     "burrito": {"tortilla", "meat2", "onion", "lettuce", "salsa3"}
 }
@@ -341,9 +376,36 @@ def game_running():
                 x_offset = zona_armado.x + 30
                 y_offset += 80  # Espaciado vertical
         
-        receta_texto = font.render(f"{receta_actual} + {bebida_actual}", True, (0, 0, 0))
+
+
+
+        # Posiciones dentro de la nube
+        x_base = rect_nube.x + 30
+        y_base = rect_nube.y + 80
+        espacio_entre_ingredientes = 50  # Espaciado entre elementos dentro de la nube
+
+        # Mostrar la bebida al lado del alimento
+        x_offset = x_base + 50  # Espacio después del alimento
+        for ing in ingredientes:
+            if ing["name"] == bebida_actual:
+                screen.blit(ing["image"], (x_offset, y_base))
+                x_offset += 150  # Espacio para los ingredientes
+                break
+
+        # Mostrar la imagen del alimento preparado dentro de la nube
+        if receta_actual in alimentos_preparados:
+            screen.blit(alimentos_preparados[receta_actual], (x_base, y_base))
+
+        # Mostrar los ingredientes del pedido a la derecha de la comida y la bebida
+        for ing_name in ingredientes_receta:
+            for ing in ingredientes:
+                if ing["name"] == ing_name:
+                    ingrediente_reducido = pygame.transform.scale(ing["image"], (50, 50))  # Tamaño especial para salsas
+                    screen.blit(ingrediente_reducido, (x_offset, y_base + 30))
+                    x_offset += espacio_entre_ingredientes  # Espaciado entre ingredientes
+                    break
+        
         vidas_texto = font.render(f"Vidas: {vidas}", True, (255, 0, 0))
-        screen.blit(receta_texto, (rect_nube.x + 10, rect_nube.y + 10))
         screen.blit(vidas_texto, (50, 100))
 
 
