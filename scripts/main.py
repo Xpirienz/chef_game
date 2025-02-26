@@ -4,62 +4,58 @@ from sys import exit
 
 ##################################################-FUNCIONES-#####################################################################
 def flash_animacion():
-    # Asegurar que la animación esté centrada en el cliente
     anim_rect = animacion_frame1.get_rect(center=rect_client.center)  
 
-    # Dibujar primer frame en el centro del cliente
     screen.blit(animacion_frame1, anim_rect)
     pygame.display.update()
-    pygame.time.delay(100)  # Espera 0.4 segundos
+    pygame.time.delay(100)  #Tiempo primer frame
 
-    # Dibujar segundo frame en el centro del cliente
     screen.blit(animacion_frame2, anim_rect)
     pygame.display.update()
-    pygame.time.delay(100) 
-
-def verificar_receta():
-    global puntuacion, receta_actual, ingredientes_receta, bebida_actual, vidas, cliente_actual, tiempo_inicio
-
-    ingredientes_set = {ing["name"] for ing in ingredientes_armados}  # Convertir a set
-
-    # Si el pedido es correcto
-    if ingredientes_set == set(ingredientes_receta) | {bebida_actual}:
-        puntuacion += 100
-        mostrar_cliente_feliz()
-        flash_animacion()
-
-    # Si el pedido es incorrecto o el tiempo llegó a 0
-    else:
-        puntuacion -= 50
-        vidas -= 1
-        flash_animacion()
-        if vidas <= 0:
-            game_over()
-
-    # Reiniciar cliente y pedido
-    cambiar_cliente()
+    pygame.time.delay(100) #Tiempo segundo frame
 
 def cambiar_cliente():
-    global cliente_actual, receta_actual, ingredientes_receta, bebida_actual, tiempo_inicio
+    global cliente_actual, receta_actual, ingredientes_receta, bebida_actual, tiempo_inicio, tiempo_expirado
     
-    # 🔹 Elegir nuevo cliente y pedido
     cliente_actual = random.choice(tipos_clientes)
     receta_actual, ingredientes_receta = random.choice(list(recetas.items()))
     bebida_actual = random.choice(bebidas)
 
-    # 🔹 Reiniciar el temporizador
+    
     tiempo_inicio = pygame.time.get_ticks()
+    tiempo_expirado = False
 
+    ingredientes_armados.clear()
+
+    screen.blit(surface_nube, rect_nube)
+    screen.blit(cliente_actual["normal"], rect_client)  
+    pygame.display.update()
+
+def verificar_receta():
+    global puntuacion, vidas, tiempo_inicio
+
+    ingredientes_set = {ing["name"] for ing in ingredientes_armados}
+    if ingredientes_set == set(ingredientes_receta) | {bebida_actual}:
+        puntuacion += 100
+        mostrar_cliente_feliz()
+    else:
+        puntuacion -= 50
+        vidas -= 1
+        if vidas <= 0:
+            game_over()
+
+    flash_animacion()  
+    cambiar_cliente() 
 
 def mostrar_cliente_feliz():
     screen.blit(cliente_actual["feliz"], rect_client)
     pygame.display.update()
-    pygame.time.delay(1000)  # Espera 1 segundo antes de cambiar al siguiente cliente
+    pygame.time.delay(1000)  
 
 def game_over():
     screen.fill((0, 0, 0))
     game_over_text = font.render("GAME OVER", True, (255, 0, 0))
-    screen.blit(game_over_text, (width//2 - 100, height//2))
+    screen.blit(game_over_text, (height//2.5 , width//2))
     pygame.display.update()
     pygame.time.delay(3000)
     pygame.quit()
@@ -111,7 +107,7 @@ rect_entregar = surface_entregar.get_rect(center = (height//1.33, width//1.215))
 
 ingredientes_data = [
 
-    # Carnes, panes y verduras
+    #Carnes, panes y verduras
     {"name": "cheese", "path": 'graphics/art_kidchen elements/cheese.png', "size": (90, 90), "pos": (height//4, width//1.350), "align": "center"},
     {"name": "lettuce", "path": 'graphics/art_kidchen elements/lettuce.png', "size": (90, 90), "pos": (height//3.050, width//1.345), "align": "center"},
     {"name": "tomato", "path": 'graphics/art_kidchen elements/tomato.png', "size": (90, 90), "pos": (height//3.090, width//1.193), "align": "center"},
@@ -125,12 +121,12 @@ ingredientes_data = [
     {"name": "pan3", "path": 'graphics/art_kidchen elements/pan_3.png', "size": (100, 100), "pos": (height//11, width//1.075), "align": "center"},
     {"name": "tortilla", "path": 'graphics/art_kidchen elements/tortilla.png', "size": (100, 100), "pos": (height//4.05, width//1.092), "align": "center"},
     
-    # Salsas
+    #Salsas
     {"name": "salsa1", "path": 'graphics/art_kidchen elements/salsa_1.png', "size": (50, 100), "pos": (height//2, width//1.370), "align": "midbottom"},
     {"name": "salsa2", "path": 'graphics/art_kidchen elements/salsa_2.png', "size": (50, 100), "pos": (height//2.190, width//1.370), "align": "midbottom"},
     {"name": "salsa3", "path": 'graphics/art_kidchen elements/salsa_3.png', "size": (50, 100), "pos": (height//1.85, width//1.370), "align": "midbottom"},
     
-    # Bebidas y papitas
+    #Bebidas y papitas
     {"name": "soda", "path": 'graphics/art_kidchen elements/soda.png', "size": (100, 100), "pos": (height//12, width//1.470), "align": "midbottom"},
     {"name": "water", "path": 'graphics/art_kidchen elements/wather.png', "size": (100, 100), "pos": (height//8, width//1.470), "align": "midbottom"},
     {"name": "boxjuice", "path": 'graphics/art_kidchen elements/boxjuice.png', "size": (100, 100), "pos": (height//6, width//1.470), "align": "midbottom"},
@@ -181,7 +177,7 @@ rect_nube = surface_nube.get_rect(center = (width/0.9, height//8))
 
 cliente_actual = random.choice(tipos_clientes)
 
-# Definir recetas
+#Recetas definidas
 recetas = {
     "hamburguesa": {"meat1", "lettuce", "tomato", "cheese", "pan2", "salsa1"},
     "sandwich": {"jamoneta", "lettuce", "tomato", "cheese", "onion", "pan3"},
@@ -189,10 +185,10 @@ recetas = {
     "burrito": {"tortilla", "meat2", "onion", "lettuce", "salsa3"}
 }
 
-# Lista de bebidas
+#Lista de bebidas
 bebidas = ["soda", "water", "boxjuice"]
 
-# Seleccionar receta y bebida aleatoria
+#Seleccionar receta y bebida aleatoria
 receta_actual, ingredientes_receta = random.choice(list(recetas.items()))
 bebida_actual = random.choice(bebidas)
 
@@ -213,12 +209,11 @@ rect_exit = surface_exit.get_rect(center = (height//2, width//1.2))
 surface_continue = font.render('continue', True, white)
 rect_continue = surface_continue.get_rect(center = (height//1.2, width//1.2))
 
-#Zona de armado
-
+#Zona de armado, puntuacion y vidas
 zona_armado = pygame.Rect(width*0.7426 , height*0.418, height * 0.26, width*0.187)
 ingredientes_armados = []
 max_ingredientes = 8
-vidas = 3
+vidas = 4
 puntuacion = 0
 
 #Flag switches 
@@ -226,7 +221,6 @@ mouse_pos = pygame.mouse.get_pos()
 sound_played_play = False
 sound_played_exit = False
 sound_played_continue = False
-arrastre = False
 ############################################################FUNCIONES############################################################
 
 
@@ -318,25 +312,24 @@ def tutorial_screen():
 #--------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------GAME---------------------------------------------------------------#
 def game_running():
-    global ingredientes_armados, tiempo_restante, puntuacion, cliente_actual
+    global ingredientes_armados, tiempo_inicio, puntuacion, cliente_actual, tiempo_expirado
+
     ingrediente_seleccionado = None
     offset_x, offset_y = 0, 0
+
     tiempo_inicio = pygame.time.get_ticks()
+    tiempo_expirado = False
 
     while True:
-
-        mouse_pos = pygame.mouse.get_pos()  # Obtener la posición del mouse
-        cursor_normal = True  # Bandera para restaurar cursor si no está sobre nada interacti
-
-        tiempo_actual = pygame.time.get_ticks()  # Obtener tiempo actual
-        tiempo_transcurrido = (tiempo_actual - tiempo_inicio) // 1000  # Convertir a segundos
-        tiempo_restante = max(5 - tiempo_transcurrido, 0)
+        #cursor
+        mouse_pos = pygame.mouse.get_pos()  
+        cursor_normal = True  
+        #Temporizador regresivo
+        tiempo_actual = pygame.time.get_ticks()  
+        tiempo_transcurrido = (tiempo_actual - tiempo_inicio) // 1000  
+        tiempo_restante = max(10 - tiempo_transcurrido, 0)
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-                
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if rect_vaciar.collidepoint(event.pos):
                     ingredientes_armados.clear()
@@ -349,7 +342,6 @@ def game_running():
                             offset_x = event.pos[0] - ingrediente_seleccionado["rect"].x
                             offset_y = event.pos[1] - ingrediente_seleccionado["rect"].y
                             break
-
             if event.type == pygame.MOUSEBUTTONUP and ingrediente_seleccionado:
                 if zona_armado.colliderect(ingrediente_seleccionado["rect"]):
                     if len(ingredientes_armados) < max_ingredientes:
@@ -359,95 +351,97 @@ def game_running():
             if event.type == pygame.MOUSEMOTION and ingrediente_seleccionado:
                 ingrediente_seleccionado["rect"].x = event.pos[0] - offset_x
                 ingrediente_seleccionado["rect"].y = event.pos[1] - offset_y
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
 
-            
-
-
-
-        # Cambiar cursor si el mouse está sobre un ingrediente
+        #Cronometro finalizado
+        if tiempo_restante == 0 and not tiempo_expirado:
+                puntuacion -= 50
+                flash_animacion()
+                cambiar_cliente()  
+                tiempo_expirado = False
+        #Cursor animacion
         for ing in ingredientes:
             if ing["rect"].collidepoint(mouse_pos):
-                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)  # Cursor de mano
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)  
                 cursor_normal = False  
                 break  
-
-        # Cambiar cursor si el mouse está sobre la zona de armado o botones
         if zona_armado.collidepoint(mouse_pos) or rect_vaciar.collidepoint(mouse_pos) or rect_entregar.collidepoint(mouse_pos):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
             cursor_normal = False  
-
-        # Si el mouse no está sobre nada interactivo, restaurar cursor normal
         if cursor_normal:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
-
- 
-
-
-        #Blitss en pantalla
+        #Blits
         screen.blit(surface_backgroundg,rect_backgroundg)
         screen.blit(surface_kidchen,rect_kidchen)
         screen.blit(surface_vaciar,rect_vaciar)
         screen.blit(surface_entregar,rect_entregar)
-
         screen.blit(surface_nube, rect_nube)
         screen.blit(cliente_actual["normal"], rect_client)
-        
-       
-
-        # Dibujar la zona de armado
-        pygame.draw.rect(screen, (200, 100, 100), zona_armado, 3)
-        #Dibuja todos los ingredientes
+        pygame.draw.rect(screen, (200, 100, 100), zona_armado, 3) 
+        #Gerenador de ingredientes
         for ing in ingredientes:
             screen.blit(ing["image"], ing["rect"])
-        # Dibujar los ingredientes armados dentro de la zona, organizados a la derecha
+        #Orden alimentos armados
         x_offset, y_offset = zona_armado.x + 45, zona_armado.y + 10
-        max_column = 4  # Número máximo de columnas antes de saltar de fila
+        max_column = 4  
         col_count = 0
         for ing in ingredientes_armados:
             ing["rect"].topleft = (x_offset, y_offset)
             screen.blit(ing["image"], ing["rect"])
-            x_offset += 100  # Espaciado horizontal entre ingredientes
+            x_offset += 100  #Espaciado horizontal entre ingredientes
             col_count += 1
             if col_count >= max_column:  
                 col_count = 0
                 x_offset = zona_armado.x + 30
-                y_offset += 80  # Espaciado vertical
-        
-        # Posiciones dentro de la nube
+                y_offset += 80  #Espaciado vertical
+        #NUBE DE PEDIDO
         x_base = rect_nube.x + 30
         y_base = rect_nube.y + 80
-        espacio_entre_ingredientes = 50  # Espaciado entre elementos dentro de la nube
-
-        # Mostrar la bebida al lado del alimento
-        x_offset = x_base + 50  # Espacio después del alimento
+        espacio_entre_ingredientes = 50  #Espaciado entre elementos dentro de la nube
+        x_offset = x_base + 50  #Espacio después del alimento
         for ing in ingredientes:
             if ing["name"] == bebida_actual:
                 screen.blit(ing["image"], (x_offset, y_base))
-                x_offset += 150  # Espacio para los ingredientes
+                x_offset += 150  #Espacio para los ingredientes
                 break
-
-        # Mostrar la imagen del alimento preparado dentro de la nube
+        #Alimento preparado
         if receta_actual in alimentos_preparados:
             screen.blit(alimentos_preparados[receta_actual], (x_base, y_base))
-
-        # Mostrar los ingredientes del pedido a la derecha de la comida y la bebida
         for ing_name in ingredientes_receta:
             for ing in ingredientes:
                 if ing["name"] == ing_name:
-                    ingrediente_reducido = pygame.transform.scale(ing["image"], (50, 50))  # Tamaño especial para salsas
+                    ingrediente_reducido = pygame.transform.scale(ing["image"], (50, 50))  
                     screen.blit(ingrediente_reducido, (x_offset, y_base + 30))
-                    x_offset += espacio_entre_ingredientes  # Espaciado entre ingredientes
+                    x_offset += espacio_entre_ingredientes  #Espaciado entre ingredientes
                     break
         
+        #HUD INDICADORES
+        tiempo_texto = font.render(f"{tiempo_restante}s", True, (0, 0, 0))  
+        puntuacion_texto = font.render(f"{puntuacion}", True, (0, 0, 0))
+        vidas_texto = font.render(f"Vidas: {vidas}", True, (0, 0, 0))
 
-        puntuacion_texto = font.render(f"+{puntuacion}", True, (0, 0, 255))
-        vidas_texto = font.render(f"Vidas: {vidas}", True, (255, 0, 0))
-        screen.blit(vidas_texto, (50 , 50))
-        screen.blit(puntuacion_texto, (500, 50))
+        vidas_rect = vidas_texto.get_rect(topleft=(50, 50))
+        puntuacion_rect = puntuacion_texto.get_rect(topleft=(500, 50))
 
-        tiempo_texto = font.render(f"{tiempo_restante}s", True, (255, 0, 0))  # Rojo si el tiempo baja
-        screen.blit(tiempo_texto, (rect_nube.x + rect_nube.width - 60, rect_nube.y + 20))  # Ajusta posición
+        #Margen incremento
+        vidas_fondo = vidas_rect.inflate(20, 10)
+        puntuacion_fondo = puntuacion_rect.inflate(20, 10)
+
+        #Rectangulos fondo blanco
+        pygame.draw.rect(screen, (255, 255, 255), vidas_fondo)  
+        pygame.draw.rect(screen, (255, 255, 255), puntuacion_fondo)
+
+        #Borde negro, ultimo parametro
+        pygame.draw.rect(screen, (0, 0, 0), vidas_fondo, 3)  
+        pygame.draw.rect(screen, (0, 0, 0), puntuacion_fondo, 3)
+
+        screen.blit(vidas_texto, vidas_rect.topleft)
+        screen.blit(puntuacion_texto, puntuacion_rect.topleft)
+
+        screen.blit(tiempo_texto, (height//1.65, width//4))
 
 
         pygame.display.update()
