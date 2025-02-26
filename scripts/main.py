@@ -54,14 +54,56 @@ def mostrar_cliente_feliz():
     pygame.display.update()
     pygame.time.delay(1000)  
 
+def reset_game():
+    global puntuacion, vidas, ingredientes_armados, cliente_actual, receta_actual, ingredientes_receta, bebida_actual, tiempo_inicio
+
+    # Reiniciar valores del juego
+    puntuacion = 0
+    vidas = 3
+    ingredientes_armados.clear()
+
+    # Elegir un nuevo cliente y pedido
+    cliente_actual = random.choice(tipos_clientes)
+    receta_actual, ingredientes_receta = random.choice(list(recetas.items()))
+    bebida_actual = random.choice(bebidas)
+
+    # Reiniciar el temporizador
+    tiempo_inicio = pygame.time.get_ticks()
+    
 def game_over():
-    screen.fill((0, 0, 0))
-    game_over_text = font.render("GAME OVER", True, (255, 0, 0))
-    screen.blit(game_over_text, (height//2.5 , width//2))
+    global puntuacion
+    
+    screen.fill((0, 0, 0))  # Fondo negro
+    font_big = pygame.font.Font(None, 80)
+    font_small = pygame.font.Font(None, 40)
+
+    game_over_text = font_big.render("GAME OVER", True, (255, 0, 0))
+    score_text = font_small.render(f"Puntuación final: {puntuacion}", True, (255, 255, 255))
+    restart_text = font_small.render("Presiona 'R' para reiniciar", True, (255, 255, 255))
+    exit_text = font_small.render("Presiona 'Q' para salir", True, (255, 255, 255))
+
+    screen.blit(game_over_text, (screen.get_width() // 2 - game_over_text.get_width() // 2, 150))
+    screen.blit(score_text, (screen.get_width() // 2 - score_text.get_width() // 2, 250))
+    screen.blit(restart_text, (screen.get_width() // 2 - restart_text.get_width() // 2, 350))
+    screen.blit(exit_text, (screen.get_width() // 2 - exit_text.get_width() // 2, 400))
+
     pygame.display.update()
-    pygame.time.delay(3000)
-    pygame.quit()
-    exit()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    reset_game()
+                    master_menu()
+                    return
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    exit()
+
+                    
 
 #######################################################--SCREEN--#################################################################
 pygame.init()
