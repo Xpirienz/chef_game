@@ -37,9 +37,11 @@ def verificar_receta():
     ingredientes_set = {ing["name"] for ing in ingredientes_armados}
     if ingredientes_set == set(ingredientes_receta) | {bebida_actual}:
         puntuacion += 100
+        point_sound.play()
         mostrar_cliente_feliz()
     else:
         puntuacion -= 50
+        error_sound.play()
         vidas -= 1
         if vidas <= 0:
             game_over()
@@ -74,6 +76,8 @@ white = (255, 255, 255)
 
 #Sound effects
 menu_sound = pygame.mixer.Sound("effects/menusound.wav")
+error_sound = pygame.mixer.Sound("effects/error.wav")
+point_sound = pygame.mixer.Sound("effects/point.wav")
 
 #Backgrounds menu
 
@@ -315,6 +319,7 @@ def game_running():
     global ingredientes_armados, tiempo_inicio, puntuacion, cliente_actual, tiempo_expirado
 
     ingrediente_seleccionado = None
+    ingrediente_flotante = None
     offset_x, offset_y = 0, 0
 
     tiempo_inicio = pygame.time.get_ticks()
@@ -354,6 +359,24 @@ def game_running():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            
+            # Seleccionar ingrediente 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for ing in ingredientes:
+                    if ing["rect"].collidepoint(event.pos):
+                        ingrediente_flotante = {"name": ing["name"],"image": ing["image"], "rect": ing["rect"].copy()}
+                        offset_x = event.pos[0] - ingrediente_flotante["rect"].x
+                        offset_y = event.pos[1] - ingrediente_flotante["rect"].y
+                        break    
+
+            #  # Soltar ingrediente flotante
+            if event.type == pygame.MOUSEBUTTONUP and ingrediente_flotante:
+                ingrediente_flotante = None
+
+             # Mover ingrediente flotante con el cursor
+            if event.type == pygame.MOUSEMOTION and ingrediente_flotante:
+                ingrediente_flotante["rect"].x = event.pos[0] - offset_x
+                ingrediente_flotante["rect"].y = event.pos[1] - offset_y   
 
         #Cronometro finalizado
         if tiempo_restante == 0 and not tiempo_expirado:
@@ -397,6 +420,10 @@ def game_running():
                 col_count = 0
                 x_offset = zona_armado.x + 30
                 y_offset += 80  #Espaciado vertical
+        
+        # Si hay un ingrediente flotante, dibujarlo en la posición del cursor
+        if ingrediente_flotante:
+            screen.blit(ingrediente_flotante["image"], ingrediente_flotante["rect"])
         #NUBE DE PEDIDO
         x_base = rect_nube.x + 30
         y_base = rect_nube.y + 80
