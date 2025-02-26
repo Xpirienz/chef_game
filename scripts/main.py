@@ -327,7 +327,7 @@ def game_running():
         #Temporizador regresivo
         tiempo_actual = pygame.time.get_ticks()  
         tiempo_transcurrido = (tiempo_actual - tiempo_inicio) // 1000  
-        tiempo_restante = max(10 - tiempo_transcurrido, 0)
+        tiempo_restante = max(15 - tiempo_transcurrido, 0)
 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
