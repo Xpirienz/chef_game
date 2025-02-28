@@ -63,7 +63,7 @@ def game_over():
 
 #######################################################--SCREEN--#################################################################
 pygame.init()
-screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 clock = pygame.time.Clock()
 height, width = screen.get_size()
 ##############################################---MENU AND TUTO FILES---############################################################
@@ -207,7 +207,7 @@ rect_exit = surface_exit.get_rect(center = (height//2, width//1.2))
 
 #Continue
 surface_continue = font.render('continue', True, white)
-rect_continue = surface_continue.get_rect(center = (height//1.2, width//1.2))
+rect_continue = surface_continue.get_rect(center = (height//1.2, width//1.1))
 
 #Zona de armado, puntuacion y vidas
 zona_armado = pygame.Rect(width*0.7426 , height*0.418, height * 0.26, width*0.187)
